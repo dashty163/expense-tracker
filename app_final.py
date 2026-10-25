@@ -2,6 +2,7 @@ import os
 import logging
 from fastapi import FastAPI, HTTPException
 from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException
 
 # Настройка логирования
 logging.basicConfig(
@@ -37,15 +38,21 @@ def version():
     logger.info("Запрос версии приложения") 
     return {"version":"0.1.0"}
 
-@app.get("/info")
-def info():
-    app_name = os.getenv("APP_NAME", "Учебный сервис")
-    app_author = os.getenv("APP_AUTHOR", "Не указан")
 
-    return {
-        "app_name": app_name,
-        "author": app_author,
+# --- Маршруты для расходов ---
+
+@app.post("/expenses")
+def add_expense(expense: dict):
+    global next_id
+    item = {
+        "id": next_id,
+        "title": expense.get("title"),
+        "amount": expense.get("amount"),
+        "category": expense.get("category")        
     }
+    expenses.append(item)
+    next_id += 1
+    return item
 
 # --- Маршруты для расходов ---
 
